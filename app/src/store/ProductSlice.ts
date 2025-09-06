@@ -39,7 +39,7 @@ export const initialState: IState = {
 };
 
 export const getAllProducts = createAsyncThunk(
-    'products/getAll',
+    'products/getAllProducts',
     async (_, { rejectWithValue }) => {
         try {
             const res = await fetch(`${API_URL}/products`);
@@ -52,7 +52,23 @@ export const getAllProducts = createAsyncThunk(
             return rejectWithValue("Network error during fetching products");
         }
     }
-)
+);
+
+export const getAllComments = createAsyncThunk(
+    'products/getAllComments',
+    async (_, { rejectWithValue }) => {
+        try {
+            const res = await fetch(`${API_URL}/comments`);
+            const data = await res.json();
+            if (!res.ok) {
+                return rejectWithValue(data.message || "failed to fetch comments");
+            }
+            return data;
+        } catch {
+            return rejectWithValue("Network error during fetching comments");
+        }
+    }
+);
 
 const ProductSlice = createSlice({
     name: 'products',
@@ -70,6 +86,20 @@ const ProductSlice = createSlice({
                 state.error = null;
             })
             .addCase(getAllProducts.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            });
+        builder
+            .addCase(getAllComments.fulfilled, (state, action) => {
+                state.comments = action.payload;
+                state.loading = false;
+                state.error = null;
+            })
+            .addCase(getAllComments.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getAllComments.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
             });
