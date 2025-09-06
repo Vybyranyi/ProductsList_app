@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from '@store/hooks';
 import editIcon from '@assets/images/edit.svg';
 import trashIcon from '@assets/images/trash_can.svg';
 import closeIcon from '@assets/images/remove_cross.svg';
+import { deleteProduct } from '@store/ProductSlice';
 
 export interface IProductDetailsModalProps {
     isOpen: boolean;
@@ -12,7 +13,8 @@ export interface IProductDetailsModalProps {
 
 export default function ProductDetailsModal(props: IProductDetailsModalProps) {
     const dispatch = useAppDispatch();
-    const { products, comments } = useAppSelector(state => state.products);
+    const { products } = useAppSelector(state => state.products);
+    const { comments } = useAppSelector(state => state.comments);
 
     const product = products.find(p => p.id === props.productId);
     const productComments = comments.filter(c => c.productId === props.productId);
@@ -24,7 +26,7 @@ export default function ProductDetailsModal(props: IProductDetailsModalProps) {
     };
 
     const handleDelete = (id: number) => {
-        // dispatch(deleteProduct(id));
+        dispatch(deleteProduct(id));
     };
 
     const handleEdit = (id: number) => {

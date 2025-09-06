@@ -1,7 +1,8 @@
 import styles from '@pages/ListPage/ListPage.module.scss';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { useEffect, useState } from 'react';
-import { getAllComments, getAllProducts } from '@store/ProductSlice';
+import { getAllProducts } from '@store/ProductSlice';
+import { getAllComments } from '@store/CommentSlice';
 import Card from '@components/Card/Card';
 import type { IProduct } from '@store/ProductSlice';
 import ProductDetailsModal from '@components/ProductDetailsModal/ProductDetailsModal';

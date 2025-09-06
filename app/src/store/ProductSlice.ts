@@ -14,26 +14,17 @@ export interface IProduct {
     count: number;
     size: ISize;
     weight: string;
-    comments: IComment[];
-};
-
-export interface IComment {
-    id: number;
-    productId: number;
-    description: string;
-    date: string;
+    comments: number[];
 };
 
 export interface IState {
     products: IProduct[];
-    comments: IComment[];
     loading: boolean;
     error: string | null;
 }
 
 export const initialState: IState = {
     products: [],
-    comments: [],
     loading: false,
     error: null,
 };
@@ -43,29 +34,31 @@ export const getAllProducts = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         try {
             const res = await fetch(`${API_URL}/products`);
-            const data = await res.json();
             if (!res.ok) {
-                return rejectWithValue(data.message || "failed to fetch products");
+                const data = await res.json();
+                return rejectWithValue(data.message || "Failed to fetch products");
             }
-            return data;
+            return res.json();
         } catch {
             return rejectWithValue("Network error during fetching products");
         }
     }
 );
 
-export const getAllComments = createAsyncThunk(
-    'products/getAllComments',
-    async (_, { rejectWithValue }) => {
+export const deleteProduct = createAsyncThunk(
+    'products/delete',
+    async (id: number, { rejectWithValue }) => {
         try {
-            const res = await fetch(`${API_URL}/comments`);
-            const data = await res.json();
+            const res = await fetch(`${API_URL}/products/${id}`, {
+                method: "DELETE",
+            });
             if (!res.ok) {
-                return rejectWithValue(data.message || "failed to fetch comments");
+                const data = await res.json();
+                return rejectWithValue(data.message || "Failed to delete product");
             }
-            return data;
+            return id;
         } catch {
-            return rejectWithValue("Network error during fetching comments");
+            return rejectWithValue("Network error during product deletion");
         }
     }
 );
@@ -88,18 +81,17 @@ const ProductSlice = createSlice({
             .addCase(getAllProducts.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
-            });
-        builder
-            .addCase(getAllComments.fulfilled, (state, action) => {
-                state.comments = action.payload;
+            })
+            .addCase(deleteProduct.fulfilled, (state, action) => {
+                state.products = state.products.filter(product => product.id !== action.payload);
                 state.loading = false;
                 state.error = null;
             })
-            .addCase(getAllComments.pending, (state) => {
+            .addCase(deleteProduct.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(getAllComments.rejected, (state, action) => {
+            .addCase(deleteProduct.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
             });
