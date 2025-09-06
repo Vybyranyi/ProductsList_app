@@ -6,6 +6,8 @@ import { getAllComments } from '@store/CommentSlice';
 import Card from '@components/Card/Card';
 import ProductDetailsModal from '@components/ProductDetailsModal/ProductDetailsModal';
 import ProductFormModal from '@components/ProductFormModal/ProductFormModal';
+import SortControl from '@components/SortControl/SortControl';
+import ActionButton from '@components/ActionButton/ActionButton';
 import type { IProduct } from '@store/ProductSlice';
 
 export default function ListPage() {
@@ -15,6 +17,7 @@ export default function ListPage() {
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
+    const [sortOrder, setSortOrder] = useState<'name' | 'count' | 'weight'>('name');
 
     const openDetailsModal = (id: number) => {
         setSelectedProductId(id);
@@ -49,6 +52,30 @@ export default function ListPage() {
         dispatch(deleteProduct(id));
     };
 
+    const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSortOrder(event.target.value as 'name' | 'count' | 'weight');
+    };
+
+    const sortedProducts = [...products].sort((a, b) => {
+        let compareResult = 0;
+
+        if (sortOrder === 'name') {
+            compareResult = a.name.localeCompare(b.name);
+        } else if (sortOrder === 'count') {
+            compareResult = a.count - b.count;
+        } else if (sortOrder === 'weight') {
+            const weightA = parseInt(a.weight);
+            const weightB = parseInt(b.weight);
+            compareResult = weightA - weightB;
+        }
+
+        if (compareResult === 0 && sortOrder !== 'count') {
+            return a.count - b.count;
+        }
+
+        return compareResult;
+    });
+
     useEffect(() => {
         dispatch(getAllProducts());
         dispatch(getAllComments());
@@ -56,12 +83,19 @@ export default function ListPage() {
 
     return (
         <div className={styles.listPage}>
-            <h1 className={styles.title}>Product List</h1>
+            <div className={styles.titleContainer}>
+                <h1>Product List</h1>
+                <div className={styles.controls}>
+                    <SortControl sortOrder={sortOrder} onSortChange={handleSortChange} />
+                    <ActionButton text='Add product' actionType='confirm' onClick={openEditModal} />
+                </div>
+            </div>
+
             {loading && <p>Loading products...</p>}
             {error && <p>Error: {error}</p>}
-            {products.length > 0 ? (
+            {sortedProducts.length > 0 ? (
                 <div className={styles.productsGrid}>
-                    {products.map((prod: IProduct) => (
+                    {sortedProducts.map((prod: IProduct) => (
                         <Card
                             key={prod.id}
                             id={prod.id}
