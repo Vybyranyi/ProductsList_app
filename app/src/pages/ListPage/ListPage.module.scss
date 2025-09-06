@@ -1,0 +1,29 @@
+@use '@assets/styles/colorVariables.scss' as *;
+
+.listPage {
+    padding: 20px;
+    background-color: var(--Background);
+    min-height: 100vh;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.productsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.noProductsFound {
+    text-align: center;
+    color: var(--Gray);
+    margin-top: 50px;
+}

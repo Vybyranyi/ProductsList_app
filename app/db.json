@@ -1,0 +1,60 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "imageUrl": "https://exoticfruits.co.uk/cdn/shop/products/banana-apple-manzano-exoticfruitscouk-905674_grande.jpg?v=1749566721",
+      "name": "First Product",
+      "count": 4,
+      "size": {
+        "width": 200,
+        "height": 200
+      },
+      "weight": "200g",
+      "comments": [3, 4]
+    },
+    {
+      "id": 2,
+      "imageUrl": "https://t3.ftcdn.net/jpg/05/54/46/22/360_F_554462253_PTEvKTXT4Cy0YgLa15X5fVI2cVWaqLkw.jpg",
+      "name": "Second Product",
+      "count": 10,
+      "size": {
+        "width": 300,
+        "height": 150
+      },
+      "weight": "500g",
+      "comments": [5]
+    },
+    {
+      "id": 3,
+      "imageUrl": "https://img.freepik.com/free-psd/close-up-delicious-apple_23-2151868338.jpg",
+      "name": "Third Product",
+      "count": 1,
+      "size": {
+        "width": 100,
+        "height": 100
+      },
+      "weight": "50g",
+      "comments": []
+    }
+  ],
+  "comments": [
+    {
+      "id": 3,
+      "productId": 1,
+      "description": "This is a comment for the first product.",
+      "date": "14:00 22.08.2021"
+    },
+    {
+      "id": 4,
+      "productId": 1,
+      "description": "Another comment for the first product.",
+      "date": "15:00 22.08.2021"
+    },
+    {
+      "id": 5,
+      "productId": 2,
+      "description": "Comment for the second product.",
+      "date": "16:30 23.08.2021"
+    }
+  ]
+}
