@@ -43,10 +43,10 @@ export default function ProductDetailsModal(props: IProductDetailsModalProps) {
                 <div className={styles.modalHeader}>
                     <h2 className={styles.modalTitle}>{product.name}</h2>
                     <div className={styles.headerButtons}>
-                        <button onClick={() => handleEdit()}>
+                        <button onClick={handleEdit}>
                             <img src={editIcon} alt="Edit" />
                         </button>
-                        <button onClick={() => handleDelete()}>
+                        <button onClick={handleDelete}>
                             <img src={trashIcon} alt="Delete" />
                         </button>
                         <button onClick={props.onClose}>

@@ -6,6 +6,7 @@ import { getAllComments } from '@store/CommentSlice';
 import Card from '@components/Card/Card';
 import ProductDetailsModal from '@components/ProductDetailsModal/ProductDetailsModal';
 import ProductFormModal from '@components/ProductFormModal/ProductFormModal';
+import ConfirmationModal from '@components/ConfirmationModal/ConfirmationModal';
 import SortControl from '@components/SortControl/SortControl';
 import ActionButton from '@components/ActionButton/ActionButton';
 import type { IProduct } from '@store/ProductSlice';
@@ -16,7 +17,9 @@ export default function ListPage() {
 
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
+    const [productIdToDelete, setProductIdToDelete] = useState<number | null>(null);
     const [sortOrder, setSortOrder] = useState<'name' | 'count' | 'weight'>('name');
 
     const openDetailsModal = (id: number) => {
@@ -36,7 +39,15 @@ export default function ListPage() {
     const closeEditModal = () => {
         setIsEditModalOpen(false);
         dispatch(setProductToEdit(null));
+        // Після закриття модалки редагування, ми повертаємось до списку
         setSelectedProductId(null);
+    };
+
+    const openDeleteModal = () => setIsDeleteModalOpen(true);
+
+    const closeDeleteModal = () => {
+        setIsDeleteModalOpen(false);
+        setProductIdToDelete(null);
     };
 
     const handleEdit = (id: number) => {
@@ -49,7 +60,20 @@ export default function ListPage() {
     };
 
     const handleDelete = (id: number) => {
-        dispatch(deleteProduct(id));
+        setProductIdToDelete(id);
+        openDeleteModal();
+    };
+
+    const handleConfirmDelete = () => {
+        if (productIdToDelete !== null) {
+            dispatch(deleteProduct(productIdToDelete));
+            closeDeleteModal();
+            closeDetailsModal();
+        }
+    };
+
+    const handleCancelDelete = () => {
+        closeDeleteModal();
     };
 
     const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -115,7 +139,7 @@ export default function ListPage() {
                     onClose={closeDetailsModal}
                     productId={selectedProductId}
                     onEdit={handleEdit}
-                    onDelete={handleDelete} 
+                    onDelete={handleDelete}
                 />
             )}
             
@@ -124,6 +148,16 @@ export default function ListPage() {
                     isOpen={isEditModalOpen}
                     onClose={closeEditModal}
                     type="edit"
+                />
+            )}
+
+            {isDeleteModalOpen && productIdToDelete !== null && (
+                <ConfirmationModal
+                    isOpen={isDeleteModalOpen}
+                    title="Confirm Deletion"
+                    message="Are you sure you want to delete this product?"
+                    onConfirm={handleConfirmDelete}
+                    onCancel={handleCancelDelete}
                 />
             )}
         </div>
