@@ -21,12 +21,14 @@ export interface IState {
     products: IProduct[];
     loading: boolean;
     error: string | null;
+    productToEdit: IProduct | null;
 }
 
 export const initialState: IState = {
     products: [],
     loading: false,
     error: null,
+    productToEdit: null,
 };
 
 export const getAllProducts = createAsyncThunk(
@@ -63,10 +65,58 @@ export const deleteProduct = createAsyncThunk(
     }
 );
 
+export const addProduct = createAsyncThunk(
+    'products/add',
+    async (newProduct: Partial<IProduct>, { rejectWithValue }) => {
+        try {
+            const res = await fetch(`${API_URL}/products`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newProduct),
+            });
+            if (!res.ok) {
+                const data = await res.json();
+                return rejectWithValue(data.message || "Failed to add product");
+            }
+            return res.json();
+        } catch {
+            return rejectWithValue("Network error during product creation");
+        }
+    }
+);
+
+export const editProduct = createAsyncThunk(
+    'products/edit',
+    async (editedProduct: IProduct, { rejectWithValue }) => {
+        try {
+            const res = await fetch(`${API_URL}/products/${editedProduct.id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(editedProduct),
+            });
+            if (!res.ok) {
+                const data = await res.json();
+                return rejectWithValue(data.message || "Failed to edit product");
+            }
+            return res.json();
+        } catch {
+            return rejectWithValue("Network error during product edit");
+        }
+    }
+);
+
 const ProductSlice = createSlice({
     name: 'products',
     initialState,
-    reducers: {},
+    reducers: {
+        setProductToEdit: (state, action) => {
+            state.productToEdit = action.payload;
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(getAllProducts.fulfilled, (state, action) => {
@@ -94,8 +144,34 @@ const ProductSlice = createSlice({
             .addCase(deleteProduct.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
+            })
+            .addCase(addProduct.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(addProduct.fulfilled, (state, action) => {
+                state.products.push(action.payload);
+                state.loading = false;
+            })
+            .addCase(addProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+            .addCase(editProduct.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(editProduct.fulfilled, (state, action) => {
+                const index = state.products.findIndex(p => p.id === action.payload.id);
+                if (index !== -1) {
+                    state.products[index] = action.payload;
+                }
+                state.loading = false;
+            })
+            .addCase(editProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
             });
     }
 });
 
+export const { setProductToEdit } = ProductSlice.actions;
 export default ProductSlice.reducer;

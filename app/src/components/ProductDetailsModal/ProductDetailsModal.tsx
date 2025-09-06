@@ -1,18 +1,18 @@
 import styles from '@components/ProductDetailsModal/ProductDetailsModal.module.scss';
-import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { useAppSelector } from '@store/hooks';
 import editIcon from '@assets/images/edit.svg';
 import trashIcon from '@assets/images/trash_can.svg';
 import closeIcon from '@assets/images/remove_cross.svg';
-import { deleteProduct } from '@store/ProductSlice';
 
 export interface IProductDetailsModalProps {
     isOpen: boolean;
     onClose: () => void;
     productId: number;
+    onEdit: (id: number) => void;
+    onDelete: (id: number) => void;
 }
 
 export default function ProductDetailsModal(props: IProductDetailsModalProps) {
-    const dispatch = useAppDispatch();
     const { products } = useAppSelector(state => state.products);
     const { comments } = useAppSelector(state => state.comments);
 
@@ -25,12 +25,12 @@ export default function ProductDetailsModal(props: IProductDetailsModalProps) {
         }
     };
 
-    const handleDelete = (id: number) => {
-        dispatch(deleteProduct(id));
+    const handleEdit = () => {
+        props.onEdit(props.productId);
     };
 
-    const handleEdit = (id: number) => {
-        // dispatch(editProduct(id));
+    const handleDelete = () => {
+        props.onDelete(props.productId);
     };
 
     if (!props.isOpen || !product) {
@@ -43,10 +43,10 @@ export default function ProductDetailsModal(props: IProductDetailsModalProps) {
                 <div className={styles.modalHeader}>
                     <h2 className={styles.modalTitle}>{product.name}</h2>
                     <div className={styles.headerButtons}>
-                        <button onClick={() => handleEdit(props.productId)}>
+                        <button onClick={() => handleEdit()}>
                             <img src={editIcon} alt="Edit" />
                         </button>
-                        <button onClick={() => handleDelete(props.productId)}>
+                        <button onClick={() => handleDelete()}>
                             <img src={trashIcon} alt="Delete" />
                         </button>
                         <button onClick={props.onClose}>
