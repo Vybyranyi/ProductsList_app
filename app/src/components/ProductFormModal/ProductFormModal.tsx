@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { addProduct, editProduct, setProductToEdit } from '@store/ProductSlice';
 import type { IProduct } from '@store/ProductSlice';
 import closeIcon from '@assets/images/remove_cross.svg';
+import ActionButton from '@components/ActionButton/ActionButton';
 
 export interface IProductFormModalProps {
     isOpen: boolean;
@@ -60,6 +61,11 @@ export default function ProductFormModal({ isOpen, onClose, type }: IProductForm
             console.log('Adding new product:', values);
             dispatch(addProduct(values));
         }
+        dispatch(setProductToEdit(null));
+        onClose();
+    };
+
+    const handleCancel = () => {
         dispatch(setProductToEdit(null));
         onClose();
     };
@@ -123,11 +129,12 @@ export default function ProductFormModal({ isOpen, onClose, type }: IProductForm
                         </div>
 
                         <div className={styles.actionButtons}>
-                            <button type="submit" className={styles.confirmButton}>Save</button>
-                            <button type="button" onClick={() => {
-                                dispatch(setProductToEdit(null));
-                                onClose();
-                            }} className={styles.cancelButton}>Cancel</button>
+                            <ActionButton text="Save" actionType="confirm" type="submit" />
+                            <ActionButton
+                                text="Cancel"
+                                actionType="cancel"
+                                onClick={() => handleCancel}
+                            />
                         </div>
                     </Form>
                 </Formik>

@@ -1,0 +1,39 @@
+@use '@assets/styles/colorVariables.scss' as *;
+
+.confirm {
+    background-color: var(--Blue);
+    color: var(--White);
+    border: 1px solid var(--Blue);
+
+    &:hover {
+        background-color: var(--Background);
+        color: var(--Blue);
+    }
+}
+
+.cancel {
+    background-color: var(--White);
+    color: var(--Blue);
+    border: 1px solid var(--Blue);
+
+    &:hover {
+        background-color: #f0f0f5;
+    }
+}
+
+.delete {
+    background-color: var(--Red);
+    color: var(--White);
+    border: 1px solid var(--Red);
+
+    &:hover {
+        background-color: (--Background);
+    }
+}
+
+.confirm, .cancel, .delete {
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
